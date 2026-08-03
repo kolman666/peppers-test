@@ -209,7 +209,7 @@
                 cancelable: true
             });
 
-            this._target._dispatchEvent(event);
+            this._target.dispatchEvent(event);
         }
 
     }
