@@ -7,6 +7,7 @@
             this._actions = new Map();
             this._keyMap = new Map();
             this._pressedKeys = new Set();
+            this,_plugins = [];
             this._target = null;
             this._enabled = false;
             this._focused = false;
@@ -71,6 +72,14 @@
             }
         }
 
+        addPlugin(plugin) {
+            this._plugins.push(plugin);
+
+            if (this._target && plugin.attach) {
+                plugin.attach(this._target);
+            }
+        }
+
         enableAction(actionName) {
             const entry = this._actions.get(actionName);
             if (entry) {
@@ -93,6 +102,13 @@
                 this.detach();
             }
             this._target = target;
+
+            for (const plugin of this._plugins) {
+                if (plugin.attach) {
+                    plugin.attach(target);
+                }
+            }
+
             this._focused = document.hasFocus();
             target.addEventListener('keydown', this._onKeyDown);
             target.addEventListener('keyup', this._onKeyUp);
@@ -109,6 +125,13 @@
                 this._target.removeEventListener('keyup', this._onKeyUp);
                 window.removeEventListener('blur', this._onWindowBlur);
                 window.removeEventListener('focus', this._onWindowFocus);
+
+                for (const plugin of this._plugins) {
+                    if (plugin.detach) {
+                        plugin.detach();
+                    }
+                }
+
                 this._target = null;
             }
             this._enabled = false;

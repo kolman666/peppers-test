@@ -14,6 +14,9 @@
         },
     }, document);
 
+    const KeyboardPlugin = new KeyboardPlugin();
+    controller.addPlugin(KeyboardPlugin);
+
     function updateStatus() {
         document.getElementById('enabledStatus').textContent = controller.enabled;
         document.getElementById('focusedStatus').textContent = controller.focused;
