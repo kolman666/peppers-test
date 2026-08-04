@@ -120,14 +120,12 @@
             if (!this._enabled || !this._focused) return false;
             const entry = this._actions.get(action);
             if (!entry || !entry.enabled) return false;
-            return
-            this._isActionActiveInternal(action);
+            return this._isActionActiveInternal(action);
 
         }
 
         isKeyPressed(keyCode) {
-            return
-            this._pressedKeys.has(keyCode);
+            return this._pressedKeys.has(keyCode);
         }
 
         _isActionActiveInternal(actionName) {
@@ -143,17 +141,21 @@
             if (!this._enabled || !this._focused) return;
             const keyCode = event.keyCode;
             if (this._pressedKeys.has(keyCode)) return;
-            this._pressedKeys.add(keyCode);
 
             if (this._keyMap.has(keyCode)) {
                 event.preventDefault();
                 const actionName = this._keyMap.get(keyCode);
                 const entry = this._actions.get(actionName);
-                if (entry && entry.enabled) {
-                    if (!this._isActionActiveInternal(actionName)) {
-                        this._dispatch(InputController.ACTION_ACTIVATED, actionName);
-                    }
+
+                const wasActive = this._isActionActiveInternal(actionName);
+
+                this._pressedKeys.add(keyCode);
+
+                if (entry && entry.enabled && !wasActive) {
+                    this._dispatch(InputController.ACTION_ACTIVATED, actionName);
                 }
+            } else {
+                this._pressedKeys.add(keyCode);
             }
         }
 
@@ -161,17 +163,19 @@
             if (!this._enabled || !this._focused) return;
             const keyCode = event.keyCode;
             if (!this._pressedKeys.has(keyCode)) return;
-            this._pressedKeys.delete(keyCode);
 
             if (this._keyMap.has(keyCode)) {
                 event.preventDefault();
                 const actionName = this._keyMap.get(keyCode);
                 const entry = this._actions.get(actionName);
-                if (entry && entry.enabled) {
-                    if (!this._isActionActiveInternal(actionName)) {
-                        this._dispatch(InputController.ACTION_DEACTIVATED, actionName);
-                    }
+
+                this._pressedKeys.delete(keyCode);
+
+                if (entry && entry.enabled && !this._isActionActiveInternal(actionName)) {
+                    this._dispatch(InputController.ACTION_DEACTIVATED, actionName);
                 }
+            } else {
+                this._pressedKeys.delete(keyCode);
             }
         }
 
