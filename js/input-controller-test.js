@@ -12,10 +12,17 @@
             keys: [39, 68],
             enabled: true
         },
+        shoot: {
+            buttons: [0],
+            enabled: true
+        }
     }, document);
 
     const keyboardPlugin = new KeyboardPlugin();
     controller.addPlugin(keyboardPlugin);
+
+    const mousePlugin = new MousePlugin();
+    controller.addPlugin(mousePlugin);
 
     function updateStatus() {
         document.getElementById('enabledStatus').textContent = controller.enabled;
@@ -30,12 +37,16 @@
             positionX += speed;
         }
 
+        if (controller.isActionActive('shoot')) {
+            player.style.backgroundColor = 'red';
+        } else {
+            player.style.backgroundColor = 'blue';
+        }
+
         player.style.left = positionX + 'px';
 
         if (controller.isActionActive('jump')) {
             player.style.backgroundColor = 'pink';
-        } else {
-            player.style.backgroundColor = 'blue';
         }
         requestAnimationFrame(gameLoop);
     }

@@ -41,7 +41,9 @@
         bindActions(actionsToBind) {
             for (const [actionName, config] of Object.entries(actionsToBind)) {
                 this._actions.set(actionName, {
+                    ...config,
                     keys: new Set(config.keys || []),
+                    buttons: new Set(config.buttons || []),
                     enabled: config.enabled !== false
                 });
                 this._actionsState.set(actionName, false);
