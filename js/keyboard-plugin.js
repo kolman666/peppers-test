@@ -2,7 +2,6 @@
     class KeyboardPlugin {
         constructor(target) {
             this._pressedKeys = new Set();
-            this._controller = null;
             this._onKeyDown = this._onKeyDown.bind(this);
             this._onKeyUp = this._onKeyUp.bind(this);
 
@@ -11,9 +10,6 @@
             }
         }
 
-        setController(controller) {
-            this._controller = controller;
-        }
 
         attach(target) {
             this._target = target;
@@ -33,15 +29,19 @@
 
         _onKeyDown(e) {
             this._pressedKeys.add(e.keyCode);
-            if (this._controller) {
-                this._controller._update();
+            if (this._target) {
+                this._target.dispatchEvent(new CustomEvent('plugin:keyboard-change', {
+                    bubbles: true
+                }));
             }
         }
 
         _onKeyUp(e) {
             this._pressedKeys.delete(e.keyCode);
-            if (this._controller) {
-                this._controller._update();
+            if (this._target) {
+                this._target.dispatchEvent(new CustomEvent('plugin:keyboard-change', {
+                    bubbles: true
+                }));
             }
         }
 

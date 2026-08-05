@@ -14,6 +14,8 @@
             this._onWindowBlur = this._onWindowBlur.bind(this);
             this._onWindowFocus = this._onWindowFocus.bind(this);
 
+            this._onPluginChange = this._onPluginChange.bind(this);
+
             if (actionsToBind) {
                 this.bindActions(actionsToBind);
             }
@@ -51,8 +53,6 @@
 
         addPlugin(plugin) {
             this._plugins.push(plugin);
-            if (plugin.setController)
-                plugin.setController(this);
             if (this._target && plugin.attach) {
                 plugin.attach(this._target);
             }
@@ -87,6 +87,9 @@
                 }
             }
 
+            target.addEventListener('plugin:keyboard-change', this._onPluginChange);
+            target.addEventListener('plugin:mouse-change', this._onPluginChange);
+
             this._focused = document.hasFocus();
             window.addEventListener('blur', this._onWindowBlur);
             window.addEventListener('focus', this._onWindowFocus);
@@ -100,6 +103,9 @@
             if (this._target) {
                 window.removeEventListener('blur', this._onWindowBlur);
                 window.removeEventListener('focus', this._onWindowFocus);
+
+                this._target.removeEventListener('plugin:keyboard-change', this._onPluginChange);
+                this._target.removeEventListener('plugin:mouse-change', this._onPluginChange);
 
                 for (const plugin of this._plugins) {
                     if (plugin.detach) {
@@ -154,6 +160,10 @@
                     );
                 }
             }
+        }
+
+        _onPluginChange() {
+            this._update();
         }
 
         _onWindowBlur() {
