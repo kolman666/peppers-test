@@ -10,7 +10,6 @@
             this._enabled = false;
             this._focused = false;
             this._actionsState = new Map();
-            this._update = this._update.bind(this);
 
             this._onWindowBlur = this._onWindowBlur.bind(this);
             this._onWindowFocus = this._onWindowFocus.bind(this);
@@ -52,7 +51,8 @@
 
         addPlugin(plugin) {
             this._plugins.push(plugin);
-
+            if (plugin.setController)
+                plugin.setController(this);
             if (this._target && plugin.attach) {
                 plugin.attach(this._target);
             }
@@ -93,16 +93,9 @@
             if (!dontEnable) {
                 this._enabled = true;
             }
-
-            this._interval = setInterval(this._update, 16);
         }
 
         detach() {
-
-            if (this._interval) {
-                clearInterval(this._interval);
-                this._interval = null;
-            }
 
             if (this._target) {
                 window.removeEventListener('blur', this._onWindowBlur);
@@ -153,10 +146,8 @@
                 const old = this._actionsState.get(actionName);
 
                 if (active !== old) {
-                    this._actionsState.set(
-                        actionName,
-                        active
-                    );
+
+                    this._actionsState.set(actionName, active);
 
                     this._dispatch(
                         active ? InputController.ACTION_ACTIVATED : InputController.ACTION_DEACTIVATED, actionName

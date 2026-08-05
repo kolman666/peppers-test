@@ -2,13 +2,17 @@
     class MousePlugin {
         constructor(target) {
             this._pressedButtons = new Set();
-
+            this._controller = null;
             this._onMouseDown = this._onMouseDown.bind(this);
             this._onMouseUp = this._onMouseUp.bind(this);
 
             if (target) {
                 this.attach(target);
             }
+        }
+
+        setController(controller) {
+            this._controller = controller;
         }
 
         attach(target) {
@@ -30,10 +34,16 @@
 
         _onMouseDown(e) {
             this._pressedButtons.add(e.button);
+            if (this._controller) {
+                this._controller._update();
+            }
         }
 
         _onMouseUp(e) {
             this._pressedButtons.delete(e.button);
+            if (this._controller) {
+                this._controller._update();
+            }
         }
 
         isActionActive(actionConfig) {
