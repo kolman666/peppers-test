@@ -36,7 +36,8 @@
 
         isActionActive(actionConfig) {
             if (!actionConfig.keys) return false;
-            return actionConfig.keys.some(key => this._pressedKeys.has(key));
+            return [...actionConfig.keys]
+                .some(key => this._pressedKeys.has(key));
         }
     }
     window.KeyboardPlugin = KeyboardPlugin;

@@ -14,8 +14,8 @@
         },
     }, document);
 
-    const KeyboardPlugin = new KeyboardPlugin();
-    controller.addPlugin(KeyboardPlugin);
+    const keyboardPlugin = new KeyboardPlugin();
+    controller.addPlugin(keyboardPlugin);
 
     function updateStatus() {
         document.getElementById('enabledStatus').textContent = controller.enabled;
